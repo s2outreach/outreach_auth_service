@@ -3,6 +3,7 @@ package com.cts.outreach.auth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -12,7 +13,10 @@ import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.cts.outreach.auth.entity.UserEntity;
+import com.cts.outreach.auth.service.UserService;
 import com.netflix.appinfo.AmazonInfo;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class })
@@ -20,6 +24,12 @@ import com.netflix.appinfo.AmazonInfo;
 public class OutreachAuthServiceApplication {
 	
 	private Logger LOGGER = LoggerFactory.getLogger(OutreachAuthServiceApplication.class);
+	
+	@Autowired
+	UserService userService;
+	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 	public static void main(String[] args) {
 		SpringApplication.run(OutreachAuthServiceApplication.class, args);
@@ -40,4 +50,16 @@ public class OutreachAuthServiceApplication {
 	    LOGGER.info(info.get(AmazonInfo.MetaDataKey.publicHostname));
 	    return config;
 	   }
+	
+	@Bean
+	public CommandLineRunner loadAdmin() {
+		return (args) -> {
+			UserEntity userEntity = new UserEntity(
+					"admin",
+					bCryptPasswordEncoder.encode("admin"),
+					"adminemail",
+					"ADMIN");
+			Long userid = userService.addNewUser(userEntity);
+		};
+	}
 }

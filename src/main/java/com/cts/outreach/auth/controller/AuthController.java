@@ -52,7 +52,7 @@ public class AuthController {
 				newuser.getUsername(),
 				bCryptPasswordEncoder.encode(newuser.getPassword()),
 				newuser.getEmail(),
-				"volunteer");
+				"USER");
 		Long userid = userService.addNewUser(userEntity);
 
 		return new NewUserResp("user added");
