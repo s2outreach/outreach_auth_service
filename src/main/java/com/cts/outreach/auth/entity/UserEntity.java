@@ -24,6 +24,9 @@ public class UserEntity {
 	
 	@Column(name="email")
 	private String email;
+	
+	@Column(name="role")
+	private String role;
 
 	public Long getId() {
 		return id;
@@ -57,15 +60,24 @@ public class UserEntity {
 		this.email = email;
 	}
 
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
 	public UserEntity() {
 		super();
 	}
 
-	public UserEntity(String username, String password, String email) {
+	public UserEntity(String username, String password, String email, String role) {
 		super();
 		this.username = username;
 		this.password = password;
 		this.email = email;
+		this.role = role;
 	}
 
 }

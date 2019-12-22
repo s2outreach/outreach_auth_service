@@ -5,6 +5,7 @@ public class NewUserReq {
 	private String username;
 	private String password;
 	private String email;
+	private String role;
 	
 	public String getUsername() {
 		return username;
@@ -21,8 +22,14 @@ public class NewUserReq {
 	public String getEmail() {
 		return email;
 	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	public void setRole(String email) {
 		this.email = email;
 	}
-
+	public String getRole() {
+		return role;
+	}
+	
 }

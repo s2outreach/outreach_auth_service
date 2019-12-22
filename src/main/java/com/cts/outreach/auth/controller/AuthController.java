@@ -51,7 +51,8 @@ public class AuthController {
 		UserEntity userEntity = new UserEntity(
 				newuser.getUsername(),
 				bCryptPasswordEncoder.encode(newuser.getPassword()),
-				newuser.getEmail());
+				newuser.getEmail(),
+				"volunteer");
 		Long userid = userService.addNewUser(userEntity);
 
 		return new NewUserResp("user added");
@@ -61,7 +62,7 @@ public class AuthController {
 	public AuthenticateResp basicGet(HttpServletResponse response) {
 		LOGGER.info(SecurityContextHolder.getContext().getAuthentication().getName());
 		UserEntity user = userService.getUserByName(SecurityContextHolder.getContext().getAuthentication().getName());
-		return new AuthenticateResp("success", user.getId());
+		return new AuthenticateResp("success", user.getId(), user.getRole());
 	}
 	
 
