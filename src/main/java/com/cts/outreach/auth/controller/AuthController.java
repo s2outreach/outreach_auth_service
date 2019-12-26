@@ -14,9 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cts.outreach.auth.entity.UserEntity;
 import com.cts.outreach.auth.model.AuthenticateResp;
+import com.cts.outreach.auth.model.LogModel;
 import com.cts.outreach.auth.model.NewUserReq;
 import com.cts.outreach.auth.model.NewUserResp;
+import com.cts.outreach.auth.service.KafkaProducer;
 import com.cts.outreach.auth.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 public class AuthController {
@@ -29,8 +33,15 @@ public class AuthController {
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 	
+	private final KafkaProducer producer;
+	
+	@Autowired
+	public AuthController(KafkaProducer producer) {
+		this.producer = producer;
+	}
+	
 	@PostMapping("/register")
-	public NewUserResp register(@RequestBody NewUserReq newuser){
+	public NewUserResp register(@RequestBody NewUserReq newuser) throws Exception{
 		LOGGER.info("New user requested for " + newuser.getUsername() + " for email" + newuser.getEmail());
 		LOGGER.info("Check for username availability");
 		UserEntity checkUser = userService.getUserByName(newuser.getUsername());
@@ -55,6 +66,11 @@ public class AuthController {
 				"USER");
 		Long userid = userService.addNewUser(userEntity);
 
+		LogModel log = new LogModel("", newuser.getUsername(), "New user added");
+		ObjectMapper mapper = new ObjectMapper();
+		String obj = mapper.writeValueAsString(log);
+		this.producer.sendLog(obj);
+		
 		return new NewUserResp("user added");
 	}
 	
@@ -62,7 +78,7 @@ public class AuthController {
 	public AuthenticateResp basicGet(HttpServletResponse response) {
 		LOGGER.info(SecurityContextHolder.getContext().getAuthentication().getName());
 		UserEntity user = userService.getUserByName(SecurityContextHolder.getContext().getAuthentication().getName());
-		return new AuthenticateResp("success", user.getId(), user.getRole());
+		return new AuthenticateResp("success", user.getId(), user.getRole(), user.getEmail());
 	}
 	
 
