@@ -16,7 +16,10 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.cts.outreach.auth.entity.UserEntity;
+import com.cts.outreach.auth.model.LogModel;
+import com.cts.outreach.auth.service.KafkaProducer;
 import com.cts.outreach.auth.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.netflix.appinfo.AmazonInfo;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class })
@@ -30,6 +33,13 @@ public class OutreachAuthServiceApplication {
 	
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	private final KafkaProducer producer;
+	
+	@Autowired
+	public OutreachAuthServiceApplication(KafkaProducer producer) {
+		this.producer = producer;
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(OutreachAuthServiceApplication.class, args);
@@ -68,6 +78,11 @@ public class OutreachAuthServiceApplication {
 						"volunteer" + Integer.toString(i) + "@testmail.com",
 						"USER");
 				userid = userService.addNewUser(userEntity);
+				
+				LogModel log = new LogModel("", userEntity.getUsername(), "New user added");
+				ObjectMapper mapper = new ObjectMapper();
+				String obj = mapper.writeValueAsString(log);
+				this.producer.sendLog(obj);
 			}
 		};
 	}
