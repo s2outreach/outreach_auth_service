@@ -57,9 +57,18 @@ public class OutreachAuthServiceApplication {
 			UserEntity userEntity = new UserEntity(
 					"admin",
 					bCryptPasswordEncoder.encode("admin"),
-					"adminemail",
+					"admin@testmail.com",
 					"ADMIN");
 			Long userid = userService.addNewUser(userEntity);
+			int i = 1;
+			while (i <= 25) {
+				userEntity = new UserEntity(
+						"volunteer" + Integer.toString(i),
+						bCryptPasswordEncoder.encode("user"),
+						"volunteer" + Integer.toString(i) + "@testmail.com",
+						"USER");
+				userid = userService.addNewUser(userEntity);
+			}
 		};
 	}
 }
