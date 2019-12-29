@@ -33,13 +33,6 @@ public class OutreachAuthServiceApplication {
 	
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
-	private final KafkaProducer producer;
-	
-	@Autowired
-	public OutreachAuthServiceApplication(KafkaProducer producer) {
-		this.producer = producer;
-	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(OutreachAuthServiceApplication.class, args);
@@ -78,11 +71,7 @@ public class OutreachAuthServiceApplication {
 						"volunteer" + Integer.toString(i) + "@testmail.com",
 						"USER");
 				userid = userService.addNewUser(userEntity);
-				
-				LogModel log = new LogModel("", userEntity.getUsername(), "New user added");
-				ObjectMapper mapper = new ObjectMapper();
-				String obj = mapper.writeValueAsString(log);
-				this.producer.sendLog(obj);
+				i = i + 1;
 			}
 		};
 	}
