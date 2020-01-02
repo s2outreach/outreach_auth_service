@@ -3,7 +3,7 @@ ARG MAVEN_OPTS
 ENV http_proxy=${http_proxy}
 WORKDIR /app
 COPY . /app/
-RUN mvn clean package -Dmaven-test-skip=true
+RUN mvn clean package -Dmaven.test.skip=true
 
 FROM openjdk:8
 WORKDIR /app
