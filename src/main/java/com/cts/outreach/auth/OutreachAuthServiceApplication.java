@@ -44,7 +44,7 @@ public class OutreachAuthServiceApplication {
 	@Profile("aws")
 	public EurekaInstanceConfigBean eurekaInstanceConfig(InetUtils inetUtils) {
 	    EurekaInstanceConfigBean config = new EurekaInstanceConfigBean(inetUtils);
-	    AmazonInfo info = AmazonInfo.Builder.newBuilder().autoBuild("eureka");
+	    AmazonInfo info = AmazonInfo.Builder.newBuilder().autoBuild("auth");
 	    config.setHostname(info.get(AmazonInfo.MetaDataKey.publicHostname));
 	    config.setIpAddress(info.get(AmazonInfo.MetaDataKey.publicIpv4));
 	    config.setNonSecurePort(1111);
